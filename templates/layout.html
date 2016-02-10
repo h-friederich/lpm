@@ -1,0 +1,90 @@
+{% import 'utils.html' as utils %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- enable mobile rendering (according to bootstrap) -->
+  <!-- TODO: Consider disable zooming -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="utf-8">
+  <title>lpm - lightweight production management</title>
+  <meta name="author" content= "Hannes Friederich">
+  <meta name="copyright" content="Copyright © 2016">
+  <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css"/>
+  <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet" type="text/css"/>
+  <!-- Note: The default data tables css is NOT needed -->
+  <link href="{{ url_for('static', filename='css/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css"/>
+  <link href="{{ url_for('static', filename='css/project.css') }}" rel="stylesheet" type="text/css"/>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.dataTables.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/dataTables.bootstrap.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/project.js') }}"></script>
+</head>
+<body>
+
+{% set navigation_bar = [
+  (url_for('items.overview'), 'items', 'Items'),
+  (url_for('stock.overview'), 'stock', 'Stock'),
+  (url_for('components.overview'), 'components', 'Components'),
+] %}
+{% set navsel = navsel|default('items') %}
+
+{% block navigation %}
+<nav class="navbar navbar-inverse navbar-static-top navbar-main">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">lpm showcase</a>
+      <ul class="nav navbar-nav">
+        {% for href, id, caption in navigation_bar %}
+          <li{% if id == navsel %} class="active"{% endif %}><a href="{{ href }}">{{ caption }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="collapse navbar-collapse">
+      <p class="navbar-text navbar-right">Logged in as: {{ current_user.name }} (<a href="{{ url_for('login.logout') }}" class="navbar-link">Logout</a>)</p>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+{% if subnavs %}
+<nav class="navbar navbar-static-top navbar-sub">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <ul class="nav navbar-nav">
+        {% for href, icon, caption in subnavs %}
+          <li><a href="{{ href }}">
+            <span class="glyphicon {{ icon }}" aria-hidden="true"></span>
+            {{ caption }}
+          </a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div><!-- /.container-fluid -->
+</nav>
+{% endif %}
+{% endblock %}
+<div class="container-fluid content">
+<div class="row">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    {% if category == 'message' %}
+      {% set category = 'warning' %}
+    {% elif category == 'error' %}
+      {% set category = 'danger' %}
+    {% endif %}
+    {{ utils.show_message(message, category) }}
+  {% endfor %}
+{% endwith %}
+  {% block body %}{% endblock %}
+</div>
+
+</div><!-- .container-fluid -->
+
+<footer class="footer">
+  lpm v. 2016-01-20
+</footer>
+
+</body>
+
+</html>

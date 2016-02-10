@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% set navsel = 'items' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+<div class="col-md-8 col-md-offset-2">
+<h3>Add Comment for Item {{ serial }}</h3>
+<form id="comment-form" name="comment-form" class="form-horizontal" method="POST">
+  {{ forms.form_group(form.message, horizontal=True) }}
+  {{ form.hidden_tag() }}
+  <button type="submit" class="btn btn-primary">Add Comment</button>
+  <a href="{{ url_for('items.details', serial=serial) }}">
+    <button class="btn btn-default" type="button">Abort</button>
+  </a>
+</form>
+</div>
+{% endblock body %}

@@ -1,0 +1,21 @@
+{% macro form_group(elem, horizontal=True) %}
+  <div class="form-group">
+    {% if horizontal %}
+      {{ elem.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">{{ elem(class='form-control', **kwargs) }}</div>
+    {% else %}
+      {{ elem.label(class='control-label') }} {{ elem(class='form-control', **kwargs) }}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro form_file(elem, horizontal=True) %}
+  <div class="form-group">
+    {% if horizontal %}
+      {{ elem.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">{{ elem(**kwargs) }}</div>
+    {% else %}
+      {{ elem.label(class='control-label') }} {{ elem(**kwargs) }}
+    {% endif %}
+  </div>
+{% endmacro %}

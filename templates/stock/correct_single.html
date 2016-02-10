@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% set navsel = 'stock' %}
+
+{% block body %}
+{{ utils.show_message('You are about to override the exising stock! Are you sure you want to continue?', 'warning') }}
+<div class="col-md-6 col-md-offset-3">
+<h3>Correct stock for {{ name }} <small>({{ partno }})</small></h3>
+<form id="upload-form" name="upload-form" class="form-horizontal" method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <div class="col-sm-3 control-label"><strong>Current Quantity</strong></div>
+    <div class="col-sm-9">{{ current_quantity }}</div>
+  </div>
+  <div class="form-group">
+    {{ form.quantity.label(class='col-sm-3 control-label') }}
+    <div class="col-sm-9">{{ form.quantity(class='form-control') }}</div>
+  </div>
+  <div class="form-group">
+    {{ form.comment.label(class='col-sm-3 control-label') }}
+    <div class="col-sm-9">{{ form.comment(class='form-control') }}</div>
+  </div>
+  {{ form.hidden_tag() }}
+  <button type="submit" class="btn btn-primary">Correct</button>
+  <a href="{{ url_for('stock.details', partno=partno) }}">
+    <button class="btn btn-default" type="button">Abort</button>
+  </a>
+</form>
+</div>
+{% endblock body %}

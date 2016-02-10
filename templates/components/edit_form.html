@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% set navsel = 'components' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+<div class="col-md-8 col-md-offset-2">
+<h3>Edit {{ partno }}</h3>
+<form id="edit-form" name="edit-form" class="form-horizontal" method="POST">
+  {{ forms.form_group(form.name, placeholder='Name (required)', horizontal=True) }}
+  {{ forms.form_group(form.description, placeholder='Optional Description', horizontal=True) }}
+  {{ forms.form_group(form.comment, placeholder='Optional Comment', horizontal=True) }}
+  <div class="form-group">
+    {{ form.supplier1.label(class='col-sm-2 control-label') }}
+    <div class="col-sm-5">{{ form.supplier1(class='form-control', placeholder='Name') }}</div>
+    <div class="col-sm-5">{{ form.supplier1part(class='form-control', placeholder='Part Number') }}</div>
+  </div>
+  <div class="form-group">
+    {{ form.supplier2.label(class='col-sm-2 control-label') }}
+    <div class="col-sm-5">{{ form.supplier2(class='form-control', placeholder='Name') }}</div>
+    <div class="col-sm-5">{{ form.supplier2part(class='form-control', placeholder='Part Number') }}</div>
+  </div>
+  <div class="form-group">
+    {{ form.manufacturer1.label(class='col-sm-2 control-label') }}
+    <div class="col-sm-5">{{ form.manufacturer1(class='form-control', placeholder='Name') }}</div>
+    <div class="col-sm-5">{{ form.manufacturer1part(class='form-control', placeholder='Part Number') }}</div>
+  </div>
+  <div class="form-group">
+    {{ form.manufacturer2.label(class='col-sm-2 control-label') }}
+    <div class="col-sm-5">{{ form.manufacturer2(class='form-control', placeholder='Name') }}</div>
+    <div class="col-sm-5">{{ form.manufacturer2part(class='form-control', placeholder='Part Number') }}</div>
+  </div>
+  {{ form.hidden_tag() }}
+  <button type="submit" class="btn btn-primary">Save</button>
+  <a href="{{ url_for('components.details', partno=partno) }}">
+    <button class="btn btn-default" type="button">Abort</button>
+  </a>
+</form>
+</div>
+{% endblock body %}

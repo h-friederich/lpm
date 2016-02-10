@@ -1,0 +1,7 @@
+{% extends "items/details.html" %}
+
+{% block customcontent %}
+  {{ show_entry('Batch', item.batch) }}
+  {{ show_entry('Parameter 1', item.param1) }}
+  {{ show_entry('Parameter 8', item.param8) }}
+{% endblock %}

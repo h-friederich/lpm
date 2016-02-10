@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% set navsel = 'components' %}
+
+{% if current_user.has_role('component_edit') %}
+{% set subnavs = [
+  (url_for('components.add'), 'glyphicon-plus-sign', 'Create New'),
+] %}
+{% endif %}
+
+{% block body %}
+<div class="col-md-6"><h3>Components</h3></div>
+<div class="col-md-12">
+<table class="table table-striped table-bordered table-hover" id="components-table">
+  <thead>
+  <tr>
+    <th>Part Number</th>
+    <th>Name</th>
+    <th>Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for obj in data %}
+    <tr class="aslink" onclick="document.location='{{ url_for('components.details', partno=obj._id) }}'">
+      <td>{{ obj._id }}</td>
+      <td>{{ obj.name }}</td>
+      <td>
+        {% if obj.obsolete %}
+          Obsolete
+        {% elif obj.released %}
+          Released
+        {% else %}
+          Being edited
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var table = $('#components-table').DataTable({
+      "dom": "<'row'<'col-sm-2'l><'col-sm-4 filterselect checkbox'><'col-sm-6'f>>" +
+             "<'row'<'col-sm-12'tr>>" +
+		         "<'row'<'col-sm-6'i><'col-sm-6'p>>"
+    });
+    $(".filterselect").html(
+      '<label><input type="checkbox" id="show-obsolete"{% if show_obsolete %} checked{% endif %}> Show Obsolete</label>'
+    );
+    $("#show-obsolete").click(function() {
+      if ($(this).is(":checked")) {
+        window.location.href="{{ url_for('components.overview') }}?show_obsolete=true";
+      } else {
+        window.location.href="{{ url_for('components.overview') }}";
+      }
+    });
+  });
+</script>
+{% endblock body %}

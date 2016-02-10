@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% set navsel = 'debug' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+<div class="col-md-12">
+  <h3>Collection {{ collection }}, Item {{ id }}</h3>
+  <form id="di-form" name="di-form" class="form-horizontal" method="POST">
+    {{ forms.form_group(form.document, horizontal=True, rows=30) }}
+    {{ form.hidden_tag() }}
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+{% endblock body %}

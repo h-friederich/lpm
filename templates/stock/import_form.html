@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% set navsel = 'stock' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+{% if warning %}
+  {{ utils.show_message(warning.message, warning.category) }}
+{% endif %}
+<div class="col-md-6 col-md-offset-3">
+<h3>{{ title }}</h3>
+<form id="upload-form" name="upload-form" class="form-horizontal" method="POST" enctype="multipart/form-data">
+  {{ forms.form_file(form.file, horizontal=True) }}
+  {{ form.hidden_tag() }}
+  <button type="submit" class="btn btn-primary">Preview</button>
+  <a href="{{ url_for('stock.overview') }}">
+    <button class="btn btn-default" type="button">Abort</button>
+  </a>
+</form>
+</div>
+{% endblock body %}

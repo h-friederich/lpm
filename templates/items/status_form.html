@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% set navsel = 'items' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+<div class="col-md-6 col-md-offset-3">
+  <h3>Item {{ item.serial }}</h3>
+  {% if form.status.data %}
+    <div class="alert alert-info" role="alert">Do you really want to change the status to '{{ form.status.data }}'?</div>
+  {% endif %}
+  <form id="di-form" name="di-form" class="form-horizontal" method="POST">
+    {{ forms.form_group(form.status, horizontal=True, placeholder='Required') }}
+    {{ forms.form_group(form.project, horizontal=True, placeholder='Optional Project Entry') }}
+    {{ forms.form_group(form.comment, horizontal=True, placeholder='Optional Comment') }}
+    {{ form.hidden_tag() }}
+    <button type="submit" class="btn btn-primary">Change Status</button>
+    <a href="{{ url_for('items.details', serial=item._id) }}">
+      <button class="btn btn-default" type="button">Abort</button>
+    </a>
+  </form>
+</div>
+{% endblock body %}

@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% set navsel = 'items' %}
+
+{% if not subnavs %}
+  {% set subnavs = [] %}
+{% endif %}
+{% do subnavs.insert(0, (url_for('items.add_comment', serial=item._id),
+                                 'glyphicon-comment', 'Add Comment')) %}
+{% do subnavs.append((url_for('items.set_project', serial=item._id),
+                     'glyphicon-link', 'Set Project')) %}
+{% if item.available %}
+  {% do subnavs.append((url_for('items.change_status', serial=item._id),
+                       'glyphicon-transfer', 'Change Status')) %}
+  {% if current_user.has_role('item_admin') %}
+    {% do subnavs.append((url_for('items.change_status', serial=item._id, status='obsolete'),
+                         'glyphicon-ban-circle', 'Mark as Obsolete')) %}
+  {% endif %}
+{% endif %}
+
+{% macro show_entry(key, value, show_if_empty=true) %}
+  {% if value or show_if_empty==true %}
+    <dt>{{ key }}</dt><dd>{{ value }}</dd>
+  {% endif %}
+{% endmacro %}
+
+{% macro show_item_entry(key, value, show_if_empty=true) %}
+  {% if value or show_if_empty==true %}
+    <dt>{{ key }}</dt><dd>{% if value %}<a href="{{ url_for('items.details', serial=value) }}">{{ value }}</a>{% endif %}</dd>
+  {% endif %}
+{% endmacro %}
+
+{% macro show_datetime(key, value, show_if_empty=true) %}
+  {% if value %}
+    <dt>{{ key }}</dt><dd>{{ value|datetime }}</dd>
+  {% elif show_if_empty==true %}
+    <dt>{{ key }}</dt><dd></dd>
+  {% endif %}
+{% endmacro %}
+
+{% macro show_common(item) %}
+  <dt>Serial Number</dt><dd>{{ item._id }}</dd>
+  <dt>Type</dt><dd>{{ item.partno }} <small>({{ item._partname }})</small></dd>
+  {{ show_entry('Status', item.status) }}
+  {{ show_entry('Project', item.project, show_if_empty=false) }}
+{% endmacro %}
+
+{% macro show_comments(item) %}
+  <dt class="itemcomments">Comments</dt><dd><table class="table table-striped data-table" data-order='[[0, "desc" ]]'>
+    <thead><tr><th>Date</th><th>User</th><th>Message</th></tr></thead>
+    <tbody>
+  {% for c in item.comments %}
+    <tr><td>{{ c.date|datetime }}</td><td>{{ c.user|fullname }}</td><td>{{ c.message }}</td></tr>
+  {% endfor %}
+  </tbody></table></dd>
+{% endmacro %}
+
+{% block body %}
+<div class="col-md-12">
+  {% if error %}
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+  {% endif %}
+  <dl class="dl-horizontal details-list">
+    {{ show_common(item) }}
+    {% block customcontent %}{% endblock %}
+    {{ show_comments(item) }}
+  </dl>
+  <p>Here's the raw data dump:</p>
+  <pre>{{ item|tojson(indent=2) }}</pre>
+</div>
+{% endblock body %}

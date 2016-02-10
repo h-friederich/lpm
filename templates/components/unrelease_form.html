@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% set navsel = 'components' %}
+{% import 'forms.html' as forms %}
+
+{% block body %}
+<div class="col-md-6 col-md-offset-3">
+  <h3>{{ data.name }} <small>({{ data._id }})</small></h3>
+  <div class="alert alert-info" role="alert">Do you really want to un-release this component?</div>
+  <form id="di-form" name="di-form" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.action(class='btn btn-primary') }}
+    <a href="{{ url_for('components.details', partno=data._id) }}">
+      <button class="btn btn-default" type="button">Abort</button>
+    </a>
+  </form>
+</div>
+{% endblock body %}

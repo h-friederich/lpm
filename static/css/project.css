@@ -1,0 +1,79 @@
+/**
+ * Layout
+ **/
+
+html, body {
+  height: 100%;
+}
+
+/* extra padding for the right-aligned items */
+.navbar-main {
+  padding-right: 20px;
+}
+
+/* separate content from navigation */
+.navbar-sub {
+  margin-top: -20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.content {
+  min-height: 100%;
+  padding-bottom: 40px;
+}
+
+.footer {
+  position: relative;
+  margin-top: -40px;
+  height: 40px;
+  clear:both;
+  padding: 5px;
+  padding-top: 20px;
+  font-size: 11px;
+}
+
+/**
+ * Generic Features
+ **/
+
+/* mark active rows with a pointer */
+tr.aslink {
+  cursor: pointer;
+}
+
+/* show data export buttons on the right side */
+.dataexport {
+  text-align: right;
+}
+
+/**
+ * Login Page
+ **/
+
+.login {
+  padding: 20px;
+  border-radius: 5px;
+  background-color:#BBD8E9;
+}
+
+dl.details-list dt, dl.details-list dd {
+  padding-bottom: 5pt;
+}
+
+/**
+ * Design Inventory
+ **/
+
+.filterselect {
+   display: inline;
+ }
+
+.di-copy {
+  position: absolute;
+  right: 20px;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 4px;
+  padding: 9px 14px;
+  margin: 0;
+}

@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% set navsel = 'components' %}
+{% import 'utils.html' as utils %}
+
+{# outdated revisions are view-only #}
+{# editors may edit items that are not released, or start a new revision for released items #}
+{# admins may further release / unrelease items #}
+
+{% set subnavs = [] %}
+{% if not data.obsolete and current_user.has_role('component_edit') and not partno.is_outdated() %}
+  {% if data.released %}
+    {% do subnavs.append((url_for('components.new_revision', partno=partno.base_number), 'glyphicon-refresh', 'New Revision')) %}
+    {% if current_user.has_role('component_admin') %}
+      {% do subnavs.append((url_for('components.unrelease', partno=partno.base_number), 'glyphicon-thumbs-down', 'Unrelease')) %}
+      {% do subnavs.append((url_for('components.make_obsolete', partno=partno.base_number), 'glyphicon-ban-circle', 'Obsolete')) %}
+    {% endif %}
+  {% else %}
+    {% do subnavs.append((url_for('components.edit', partno=partno.base_number), 'glyphicon-wrench', 'Edit')) %}
+    {% do subnavs.append((url_for('components.fileupload', partno=partno.id), 'glyphicon-upload', 'Upload File')) %}
+    {% if current_user.has_role('component_admin') %}
+      {% do subnavs.append((url_for('components.release', partno=partno.base_number), 'glyphicon-thumbs-up', 'Release')) %}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+
+{% block body %}
+{% if data.obsolete %}
+  {{ utils.show_message('This component is obsolete', 'warning') }}
+{% endif %}
+{% if partno.is_outdated() %}
+  {{ utils.show_message('You are looking at an outdated revision!', 'warning') }}
+{% endif %}
+{% if not data.obsolete and not data.released %}
+  {{ utils.show_message('This component has not yet been released', 'info') }}
+{% endif %}
+<div class="col-md-12">
+{# main content #}
+<h3>{{ data.name }} <small>({{ partno.id }})</small></h3>
+<dl class="dl-horizontal details-list">
+  <dt>Preview</dt>
+  <dd>
+    {% if preview_file %}
+      <img src="{{ url_for('components.file', partno=partno.id, file=preview_file) }}" alt="preview" width="300" />
+    {% else %}
+      None
+    {% endif %}
+  </dd>
+  <dt>Description</dt>
+  <dd>{{ data.description }}</dd>
+  <dt>Supplier(s)</dt>
+  <dd>
+    {% for supplier in data.suppliers %}
+      {{ supplier.name }}
+      {% if supplier.partno %}
+        ({{ supplier.partno }})
+      {% endif %}
+      <br>
+    {% else %}
+      None
+    {% endfor %}
+  </dd>
+  <dt>Manufacturer(s)</dt>
+  <dd>
+    {% for manufacturer in data.manufacturers %}
+      {{ manufacturer.name }}
+      {% if manufacturer.partno %}
+        ({{ manufacturer.partno }})
+      {% endif %}
+      <br>
+    {% else %}
+      None
+    {% endfor %}
+  </dd>
+  <dt>Files</dt>
+  <dd>
+    {% for file in files %}
+      <a href="{{ url_for('components.file', partno=partno.id, file=file) }}">{{ file }}</a><br>
+    {% else %}
+      None
+    {% endfor %}
+  </dd>
+
+  <dt>Revisions</dt>
+  <dd>
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for revision in data.revisions|reverse %}
+        {% set revno = data.revisions|length - loop.index %}
+        {% if current_user.has_role('component_edit') %}
+          {% set location = url_for('components.details', partno=partno.revision_id(revno)) %}
+          <tr class="aslink" onclick="document.location='{{ location }}'">
+        {% else %}
+          <tr>
+        {% endif %}
+          <td>{{ partno.revision_repr(revno) }}</td>
+          <td>{{ revision.date|datetime }}</td>
+          <td>{{ revision.comment }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </dd>
+  <dt>History</dt>
+  <dd>
+    {% if data.history %}
+      <table class="table table-hover table-striped data-table" data-order='[[0, "desc" ]]'>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Message</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comment in data.history %}
+            <tr>
+              <td>{{ comment.date|datetime }}</td>
+              <td>{{ comment.message }}</td>
+              <td>{{ comment.user|fullname }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      None
+    {% endif %}
+  </dd>
+</dl>
+</div>
+{% endblock body %}

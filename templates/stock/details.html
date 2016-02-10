@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% set navsel = 'stock' %}
+{% import 'forms.html' as forms %}
+{% import 'utils.html' as utils %}
+
+{% if current_user.has_role('stock_admin') %}
+{% set subnavs = [
+  (url_for('stock.add_single', partno=data._id), 'glyphicon-plus-sign', 'Add to Stock'),
+  (url_for('stock.correct_single', partno=data._id), 'glyphicon-wrench', 'Correct Stock'),
+] %}
+{% endif %}
+
+{% block body %}
+<div class="col-md-12">
+<h3>{{ data.name }} <small>({{ data._id }})</small></h3>
+<dl class="dl-horizontal details-list">
+  <dt>In Stock</dt>
+  <dd>{{ data.quantity }}</dd>
+  {% if batches %}
+    <dt>Batches</dt>
+    <dd>
+      <table class="table table-striped table-bordered table-hover data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for entry in batches %}
+            <tr>
+              <td>{{ entry.name }}</td>
+              <td>{{ entry.quantity }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </dd>
+  {% endif %}
+  <dt>History</dt>
+  <dd>
+    <table class="table table-striped table-bordered table-hover data-table" data-order='[[0, "desc" ]]'>
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>Delta</th>
+        <th>Quantity</th>
+        <th>Message</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for entry in data.history %}
+          <tr>
+            <td>{{ entry.date|datetime }}</td>
+            <td>{{ entry.delta }}</td>
+            <td>{{ entry.quantity }}</td>
+            <td>{{ entry.message }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </dd>
+  {% if data.bom %}
+    <dt>BOM Rules</dt>
+    <dd>
+      <table class="table table-striped table-bordered table-hover data-table">
+      <thead>
+      <tr>
+        <th>Model No.</th>
+        <th>Name</th>
+        <th>Quantity</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for entry in data.bom %}
+          <tr>
+            <td>{{ entry.partno }}</td>
+            <td>{{ entry.name }}</td>
+            <td>{{ entry.quantity }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </dd>
+  {% endif %}
+</dl>
+</div>
+{% endblock body %}

@@ -1,0 +1,13 @@
+{% extends "items/details.html" %}
+
+{% block body %}
+<div class="col-md-12">
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  No custom formatter for item with part number <strong>{{ item.partno }}</strong> found!
+</div>
+</div>
+{{ super() }}
+{% endblock body %}
