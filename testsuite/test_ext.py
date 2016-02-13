@@ -17,11 +17,11 @@ class ExtApiTest(DataBaseTestCase):
         self.assertTrue(data.get('ok'))
         self.assertEqual(['LP0001'], data.get('serials'))
         rv = self.open_with_auth('/ext/items', username='viewer', method='POST',
-                                 data=dict(filter='{"$partno": "TE0001a"}'))
+                                 data=dict())
         self.assertEqual(200, rv.status_code)
         data = loads(rv.data.decode('utf-8'))
         self.assertFalse(data.get('ok'))
-        self.assertIn('unknown top level operator: $partno', data.get('message'))
+        self.assertIn('missing filter', data.get('message'))
         rv = self.open_with_auth('/ext/items', username='viewer', method='POST',
                                  data=dict(filt='{"$partno": "TE0001a"}'))
         self.assertEqual(200, rv.status_code)
