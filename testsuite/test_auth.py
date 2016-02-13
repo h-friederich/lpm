@@ -22,14 +22,14 @@ class AuthTest(TestCase):
             u = users[1]
             self.assertEqual('viewer', u.id)
             self.assertEqual('Viewer', u.name)
-            self.assertFalse(u.has_role('request_login'))
+            self.assertTrue(u.has_role('request_login'))
             self.assertFalse(u.has_role('component_edit'))
             self.assertFalse(u.has_role('component_admin'))
             u = users[2]
 
             ua = users[0]
             users2 = auth.get_users_with_role('request_login')
-            self.assertEqual(2, len(users2))
+            self.assertEqual(3, len(users2))
             ub = users2[0]
             self.assertEqual(ua, ub)
 
