@@ -373,7 +373,7 @@ def _create_comment(comment, date=None):
 def _check_status(partno, current_status, new_status):
     pn = PartNumber(partno)
     partmap = current_app.config.get('LPM_ITEM_STATUS_MAP', dict())
-    map = partmap.get(pn.id) or partmap.get(pn.base_number) or partmap.get('default')
+    map = partmap.get(pn.id) or partmap.get(pn.base_number) or partmap.get('default') or dict()
     if new_status not in map:
         raise ValueError("unknown status: '%s'" % new_status)
     definition = map.get(new_status)
@@ -389,6 +389,6 @@ def _check_status(partno, current_status, new_status):
 def _is_unavailable(partno, status):
     pn = PartNumber(partno)
     partmap = current_app.config.get('LPM_ITEM_STATUS_MAP', dict())
-    map = partmap.get(pn.id) or partmap.get(pn.base_number) or partmap.get('default')
+    map = partmap.get(pn.id) or partmap.get(pn.base_number) or partmap.get('default') or dict()
     definition = map.get(status)
     return definition.get('unavailable', False)
