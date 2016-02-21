@@ -264,9 +264,7 @@ def create_comment(comment, date=None):
     return {'user': current_user.id, 'date': date, 'message': comment}
 
 
-def do_update_status(item, status, project=None, comment=None, now=None):
-    if not now:
-        now = datetime.now()
+def do_update_status(item, status, project=None, comment=None, now=datetime.now()):
     setdata = {}
     comments = []
     _check_status(item.get('partno'), item.get('status'), status)
