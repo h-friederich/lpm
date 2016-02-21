@@ -133,33 +133,9 @@ def change_status(serial, status=''):
     item = current_app.mongo.db.items.find_one_or_404(serial, projection=['partno', 'status'])
 
     if request.method == 'POST' and form.validate_on_submit():
-        now = datetime.now()
-        status = form.status.data
-        project = form.project.data
-        setdata = {}
-        comments = []
-
         try:
-            _check_status(item.get('partno'), item.get('status'), status)
-            setdata['status'] = status
-            setdata['available'] = not _is_unavailable(item.get('partno'), status)
-            if project:
-                setdata['project'] = project
-            comments.append(create_comment("[Auto] changed status to '%s'" % status, now))
-            if form.comment.data:
-                comments.append(create_comment(form.comment.data, now))
-
-            result = current_app.mongo.db.items.update_one(
-                    filter={'_id': serial},
-                    update={
-                        '$set': setdata,
-                        '$push': {'comments': {'$each': comments}}
-                    }
-            )
-            if result.modified_count == 1:
-                flash('status successfully updated', 'success')
-            else:
-                flash('status update failed, please contact the administrator', 'error')
+            do_update_status(item, form.status.data, form.project.data, form.comment.data)
+            flash('status successfully updated', 'success')
             return redirect(url_for('items.details', serial=serial))
 
         except Exception as e:
@@ -279,6 +255,39 @@ def process_requirements(obj, reqs):
         _check_status(obj.get('partno'), '', obj.get('status'))
 
 
+def create_comment(comment, date=None):
+    """
+    Creates a comment object
+    """
+    if date is None:
+        date = datetime.now()
+    return {'user': current_user.id, 'date': date, 'message': comment}
+
+
+def do_update_status(item, status, project=None, comment=None):
+    now = datetime.now()
+    setdata = {}
+    comments = []
+    _check_status(item.get('partno'), item.get('status'), status)
+    setdata['status'] = status
+    setdata['available'] = not _is_unavailable(item.get('partno'), status)
+    if project:
+        setdata['project'] = project
+    comments.append(create_comment("[Auto] changed status to '%s'" % status, now))
+    if comment:
+        comments.append(create_comment(comment, now))
+
+    result = current_app.mongo.db.items.update_one(
+        filter={'_id': item.get('_id')},
+        update={
+            '$set': setdata,
+            '$push': {'comments': {'$each': comments}}
+        }
+    )
+    if result.modified_count != 1:
+        raise RuntimeError('status update failed, please contact the administrator')
+
+
 def _import_file(filepath):
     """
     Processes the XLS data, ensures that the part numbers exist (incl. revision)
@@ -359,15 +368,6 @@ def _store_items(data):
     # add the items to the stock as well
     for partno, value in quantities.items():
         update_counts(partno, value, None, 'items added')
-
-
-def create_comment(comment, date=None):
-    """
-    Creates a comment object
-    """
-    if date is None:
-        date = datetime.now()
-    return {'user': current_user.id, 'date': date, 'message': comment}
 
 
 def _check_status(partno, current_status, new_status):
