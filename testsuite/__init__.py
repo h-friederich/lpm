@@ -87,6 +87,10 @@ class TestCase(unittest.TestCase):
                         'obsolete': dict(origins=[''], unavailable=True, role='item_admin')
                     },
                 },
+                LPM_EXT_UPDATE_FIELDS={
+                    'TE0001a': {'key1', 'key2'},
+                    'default': set(),
+                },
         )
         lpm.init(self.app)
         self.client = self.app.test_client()

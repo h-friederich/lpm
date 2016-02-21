@@ -81,6 +81,9 @@ app.config.update(
                 'obsolete': dict(origins=[''], unavailable=True, role='item_admin')
             },
         },
+        LPM_EXT_UPDATE_FIELDS={
+            'default': set(),
+        },
 )
 
 lpm.init(app)
