@@ -111,7 +111,7 @@ def add_comment(serial):
     if request.method == 'POST' and form.validate_on_submit():
         result = current_app.mongo.db.items.update_one(
                 filter={'_id': serial},
-                update={'$push': {'comments': _create_comment(form.message.data)}}
+                update={'$push': {'comments': create_comment(form.message.data)}}
         )
         if result.modified_count == 1:
             flash('comment successfully added', 'success')
@@ -145,9 +145,9 @@ def change_status(serial, status=''):
             setdata['available'] = not _is_unavailable(item.get('partno'), status)
             if project:
                 setdata['project'] = project
-            comments.append(_create_comment("[Auto] changed status to '%s'" % status, now))
+            comments.append(create_comment("[Auto] changed status to '%s'" % status, now))
             if form.comment.data:
-                comments.append(_create_comment(form.comment.data, now))
+                comments.append(create_comment(form.comment.data, now))
 
             result = current_app.mongo.db.items.update_one(
                     filter={'_id': serial},
@@ -182,7 +182,7 @@ def set_project(serial):
 
     if request.method == 'POST' and form.validate_on_submit():
         project = form.project.data
-        comment = _create_comment("[Auto] changed project association to '%s'" % project)
+        comment = create_comment("[Auto] changed project association to '%s'" % project)
         result = current_app.mongo.db.items.update_one(
                 filter={'_id': serial},
                 update={
@@ -340,10 +340,10 @@ def _store_items(data):
         else:
             item['status'] = ''
             item['available'] = True
-        comments = [_create_comment('[Auto] created', now)]
+        comments = [create_comment('[Auto] created', now)]
         comment = item.pop('comment', None)
         if comment:
-            comments.append(_create_comment(comment, now))
+            comments.append(create_comment(comment, now))
         item['comments'] = comments
         current_app.mongo.db.items.insert(item)
 
@@ -361,7 +361,7 @@ def _store_items(data):
         update_counts(partno, value, None, 'items added')
 
 
-def _create_comment(comment, date=None):
+def create_comment(comment, date=None):
     """
     Creates a comment object
     """

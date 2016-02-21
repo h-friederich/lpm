@@ -12,12 +12,12 @@ class ItemsTest(DataBaseTestCase):
         with self.app.test_request_context():
             usr = auth.auth_user('viewer', '1234')
             login_user(usr)
-            c = items._create_comment('comment')
+            c = items.create_comment('comment')
             self.assertEqual('viewer', c.get('user'))
             self.assertEqual('comment', c.get('message'))
             # don't test the date
             date = datetime.now()
-            c = items._create_comment('comment', date)
+            c = items.create_comment('comment', date)
             self.assertEqual({'user': 'viewer', 'date': date, 'message': 'comment'}, c)
             logout_user()
 
