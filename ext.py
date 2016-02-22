@@ -40,7 +40,7 @@ def item_filter():
             raise ValueError('missing filter')
         filter = loads(filter)
         items = list(current_app.mongo.db.items.find(filter, projection=['_id']))
-        serials = [item.get('_id') for item in items]  # return a list of serial numbers
+        serials = sorted([item.get('_id') for item in items])  # return a sorted list of serial numbers
         ok = True
     except Exception as e:
         message = str(e)
