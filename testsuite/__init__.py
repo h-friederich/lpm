@@ -56,6 +56,7 @@ class TestCase(unittest.TestCase):
                     )
                 },
                 LPM_PARTNO_PREFIX='LP',
+                LPM_COMPONENT_CATEGORIES={'category1', 'category2'},
                 LPM_COMPONENT_FILES_DIR='/tmp',
                 LPM_ITEM_VIEW_MAP={
                     'TE0002': 'TE0002.html',

@@ -6,6 +6,7 @@ A component definition consists of (at least):
 - an ID (part number)
 - a descriptive name
 - a description
+- a category
 - a list of suppliers
 - a list of manufacturers
 - a list of revisions consisting of:
@@ -30,6 +31,8 @@ The rules of access are as follows:
     - release / un-release components
     - obsolete components
 
+Valid categories can be defined with the LPM_COMPONENT_CATEGORIES configuration entry.
+
 Note: There is no lock mechanism available, i.e. multiple users may edit the same component simultaneously.
 
 :copyright: (c) 2016 Hannes Friederich.
@@ -45,7 +48,7 @@ from flask.ext.login import login_required, current_user
 from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
 from flask_wtf import Form
-from wtforms import TextAreaField, StringField, SubmitField, FileField
+from wtforms import TextAreaField, StringField, SubmitField, FileField, SelectField
 from wtforms.validators import InputRequired
 from lpm.login import role_required
 from lpm.utils import extract_errors
@@ -56,6 +59,7 @@ bp = Blueprint('components', __name__)
 class ComponentForm(Form):
     name = StringField(label='Name', validators=[InputRequired()])
     description = TextAreaField(label='Description')
+    category = SelectField(label='Category', validators=[InputRequired()])
     comment = TextAreaField(label='Revision Comment')
     supplier1 = StringField(label='Supplier 1')
     supplier1part = StringField('Supplier 1 Part Number')
@@ -96,7 +100,7 @@ def overview():
     filter = {'obsolete': False}
     if request.args.get('show_obsolete'):
         filter = None
-    data = current_app.mongo.db.components.find(filter=filter, projection=['name', 'obsolete', 'released'])
+    data = current_app.mongo.db.components.find(filter=filter, projection=['name', 'category', 'obsolete', 'released'])
     return render_template('components/overview.html', data=data,
                            show_obsolete=request.args.get('show_obsolete'))
 
@@ -181,6 +185,7 @@ def add():
     Presents the form to add a new component, and adds it to the database if submitted
     """
     form = ComponentForm(request.form)
+    form.category.choices = _get_categories()
     # form submittal handling
     if request.method == 'POST' and form.validate_on_submit():
         id = _create_new_partno()
@@ -190,6 +195,7 @@ def add():
         obj = dict(_id=id,
                    name=form.name.data,
                    description=form.description.data,
+                   category=form.category.data,
                    suppliers=suppliers,
                    manufacturers=manufacturers,
                    revisions=[{'date': now, 'comment': form.comment.data}],
@@ -237,6 +243,7 @@ def edit(partno):
         data['manufacturer2'] = manufacturers[1].get('name')
         data['manufacturer2part'] = manufacturers[1].get('partno')
     form = ComponentForm(request.form, data=data)
+    form.category.choices = _get_categories()
 
     # form submittal handling
     # use $set for the updated fields, directly update the latest revision
@@ -246,6 +253,7 @@ def edit(partno):
         manufacturers = _extract_manufacturers(form)
         set_data = dict(name=form.name.data,
                         description=form.description.data,
+                        category=form.category.data,
                         suppliers=suppliers,
                         manufacturers=manufacturers)
         set_data['revisions.'+str(revidx)+'.comment'] = form.comment.data
@@ -562,6 +570,10 @@ def _extract_manufacturers(form):
     if form.manufacturer2.data:
         manufacturers.append({'name': form.manufacturer2.data, 'partno': form.manufacturer2part.data})
     return manufacturers
+
+
+def _get_categories():
+    return [(c, c) for c in current_app.config.get('LPM_COMPONENT_CATEGORIES', set())]
 
 
 class PartNumber:

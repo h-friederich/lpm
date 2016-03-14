@@ -15,6 +15,7 @@
   <tr>
     <th>Part Number</th>
     <th>Name</th>
+    <th>Category</th>
     <th>Status</th>
   </tr>
   </thead>
@@ -23,6 +24,7 @@
     <tr class="aslink" onclick="document.location='{{ url_for('components.details', partno=obj._id) }}'">
       <td>{{ obj._id }}</td>
       <td>{{ obj.name }}</td>
+      <td>{{ obj.category }}</td>
       <td>
         {% if obj.obsolete %}
           Obsolete

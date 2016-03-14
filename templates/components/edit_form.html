@@ -8,6 +8,7 @@
 <form id="edit-form" name="edit-form" class="form-horizontal" method="POST">
   {{ forms.form_group(form.name, placeholder='Name (required)', horizontal=True) }}
   {{ forms.form_group(form.description, placeholder='Optional Description', horizontal=True) }}
+  {{ forms.form_group(form.category) }}
   {{ forms.form_group(form.comment, placeholder='Optional Comment', horizontal=True) }}
   <div class="form-group">
     {{ form.supplier1.label(class='col-sm-2 control-label') }}

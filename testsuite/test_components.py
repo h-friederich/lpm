@@ -146,6 +146,7 @@ class ComponentTest(DataBaseTestCase):
         rv = self.client.post('/components/add', data=dict(
             name='The name',
             description='Some description',
+            category='category1',
             comment='really?',
             supplier1='Supplier 1',
             supplier1part='part1',
@@ -164,6 +165,7 @@ class ComponentTest(DataBaseTestCase):
         # we don't know the date thus do not compare the entire entry
         self.assertEqual('The name', obj.get('name'))
         self.assertEqual('Some description', obj.get('description'))
+        self.assertEqual('category1', obj.get('category'))
         self.assertEqual([{'name': 'Supplier 1', 'partno': 'part1'},
                           {'name': 'Supplier 2', 'partno': 'part2'}],
                          obj.get('suppliers'))
@@ -204,6 +206,7 @@ class ComponentTest(DataBaseTestCase):
             name='The name',
             description='Some description',
             comment='really?',
+            category='category2',
             supplier1='Supplier 1',
             supplier1part='part1',
             supplier2='Supplier 2',
@@ -221,6 +224,7 @@ class ComponentTest(DataBaseTestCase):
         # we don't know the date thus do not compare the entire entry
         self.assertEqual('The name', obj.get('name'))
         self.assertEqual('Some description', obj.get('description'))
+        self.assertEqual('category2', obj.get('category'))
         self.assertEqual([{'name': 'Supplier 1', 'partno': 'part1'},
                           {'name': 'Supplier 2', 'partno': 'part2'}],
                          obj.get('suppliers'))
