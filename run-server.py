@@ -53,7 +53,7 @@ app.config.update(
         },
         LPM_PARTNO_PREFIX='LP',
         LPM_COMPONENT_FILES_DIR='/tmp',
-        LPM_COMPONENT_CATEGORIES={'category 1', 'category 2'},
+        LPM_COMPONENT_CATEGORIES=['category 1', 'category 2'],
         LPM_ITEM_VIEW_MAP={
             'LP0002': 'LP0002.html',
         },

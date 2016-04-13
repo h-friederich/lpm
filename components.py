@@ -229,6 +229,7 @@ def edit(partno):
     num_manufacturers = len(manufacturers)
     data = dict(name=obj.get('name'),
                 description=obj.get('description'),
+                category=obj.get('category'),
                 comment=revisions[revidx].get('comment'))
     if num_suppliers > 0:
         data['supplier1'] = suppliers[0].get('name')
